@@ -43,6 +43,7 @@ from src.rule.template import TextCondition, TextOptions
 from src.schemas.process import ProcessObject
 from src.schemas.tieba import Content
 from src.utils.logging import system_logger
+from src.api.auth import current_user_depends
 
 # ---------------------------------------------------------------------------
 # Paths
@@ -498,7 +499,7 @@ router = APIRouter(prefix="/api/plugin/ocr-review", tags=["ocr-review"])
 
 
 @router.get("/list")
-async def list_results() -> BaseResponse[list[ScanResult]]:
+async def list_results(user: current_user_depends) -> BaseResponse[list[ScanResult]]:
     results: list[ScanResult] = []
     for f in sorted(RESULTS_DIR.glob("*.json"), key=os.path.getmtime, reverse=True):
         try:
@@ -509,7 +510,7 @@ async def list_results() -> BaseResponse[list[ScanResult]]:
 
 
 @router.post("/scan/{pid}")
-async def scan_post(pid: int, force: bool = False) -> BaseResponse[ScanResult]:
+async def scan_post(pid: int, force: bool = False, user: current_user_depends = None) -> BaseResponse[ScanResult]:
     if force:
         p = _result_path(pid)
         if p.exists():
@@ -528,12 +529,12 @@ async def scan_post(pid: int, force: bool = False) -> BaseResponse[ScanResult]:
 
 
 @router.get("/config")
-async def get_config() -> BaseResponse[OCRConfig]:
+async def get_config(user: current_user_depends = None) -> BaseResponse[OCRConfig]:
     return BaseResponse(data=_load_config())
 
 
 @router.put("/config")
-async def update_config(req: OCRConfig) -> BaseResponse[OCRConfig]:
+async def update_config(req: OCRConfig, user: current_user_depends = None) -> BaseResponse[OCRConfig]:
     if not 1 <= req.max_images <= 50:
         raise HTTPException(status_code=400, detail="max_images must be 1-50")
     _save_config(req)
@@ -542,7 +543,7 @@ async def update_config(req: OCRConfig) -> BaseResponse[OCRConfig]:
 
 
 @router.post("/cache/clear")
-async def clear_cache() -> BaseResponse[int]:
+async def clear_cache(user: current_user_depends = None) -> BaseResponse[int]:
     count = 0
     for f in RESULTS_DIR.glob("*.json"):
         f.unlink()
