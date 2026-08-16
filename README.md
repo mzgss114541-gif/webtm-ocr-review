@@ -74,6 +74,17 @@ http://<wtm-host>:36799/ocr-review
 
 帖子带图片且 OCR 文字命中关键词时，规则自动触发。
 
+## 相关页面
+
+本插件提供 **`/ocr-review`** 管理页（调试图片 OCR）。WTM 的插件体系里还有另一个相关插件 **`push_notify`**（[webtm-push-notify](https://github.com/mzgss114541-gif/webtm-push-notify)），提供 **`/push-notify`** 管理页（配置命中推送）。
+
+| 页面 | 插件 | 功能 |
+|---|---|---|
+| `/ocr-review` | 本插件 | 调试 OCR：手动扫描 PID、查看识别结果、OCR 设置 |
+| `/push-notify` | push_notify 插件 | 配置推送：每个账户的微信 SendKey / SMTP 邮件 |
+
+两者可独立使用，也可配合：ocr_review 负责"图片内容识别"，push_notify 负责"命中后推送提醒"。
+
 ## 工作原理
 
 - 插件在 WTM 规则系统中注册自定义条件类型 `ImageOCRHit`
