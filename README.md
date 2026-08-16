@@ -92,3 +92,14 @@ http://<wtm-host>:36799/ocr-review
 ## 许可证
 
 [MIT](LICENSE)
+
+## 关于本项目
+
+本项目由 [mzgss114541-gif] 主导设计与开发，部分编码环节使用 **DeepSeek Harness**（DSH，AI agent 框架）作为辅助。
+
+代码经过实际生产环境验证，但建议使用前 review 代码、按需调整。
+
+**Contributors**
+
+- [mzgss114541-gif](https://github.com/mzgss114541-gif) — 设计、开发、测试、部署
+- [DeepSeek Harness](https://github.com/deepseek-ai) — AI agent（辅助实现）
