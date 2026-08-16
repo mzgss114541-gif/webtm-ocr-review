@@ -439,6 +439,10 @@ pre.ocr-text{background:#f8f9fa;padding:12px;border-radius:6px;font-size:13px;wh
 </head>
 <body>
 <div class="app">
+<div id="login-hint" style="display:none;background:#fef0f0;border:1px solid #fbc4c4;color:#f56c6c;padding:12px 16px;border-radius:8px;margin-bottom:16px;font-size:14px">
+  ⚠️ <b>未登录或登录已过期</b>：本页面需要 WTM 登录认证才能查看和操作。<br>
+  请先访问 <code style="background:#f5f7fa;padding:2px 6px;border-radius:4px">http://&lt;WTM地址&gt;:36799/</code> 登录 WTM，再回到本页面刷新。
+</div>
 <h1>OCR Review</h1>
 <div style="color:var(--t3);font-size:13px;margin-bottom:20px">
   规则条件: <b>图片OCR命中关键词</b> — 在 WTM 规则编辑器中添加此条件，输入关键词即可自动 OCR 匹配
@@ -474,8 +478,8 @@ pre.ocr-text{background:#f8f9fa;padding:12px;border-radius:6px;font-size:13px;wh
 <script>
 var B="/api/plugin/ocr-review";
 function toast(m,c){var e=document.getElementById("toast");e.textContent=m;e.className="toast "+c;setTimeout(function(){e.className="toast"},3000)}
-function api(m,p,b){var o={method:m,headers:{}};if(b){o.headers["Content-Type"]="application/json";o.body=JSON.stringify(b)}return fetch(B+p,o).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.detail||r.statusText);return d})})}
-function loadConfig(){api("GET","/config").then(function(d){document.getElementById("maximg").value=d.data.max_images;document.getElementById("enabled").checked=d.data.enabled}).catch(function(e){toast(e.message,"err")})}
+function api(m,p,b){var o={method:m,headers:{}};var tk=localStorage.getItem("access_token")||"";if(tk){o.headers["Authorization"]="Bearer "+tk}if(b){o.headers["Content-Type"]="application/json";o.body=JSON.stringify(b)}return fetch(B+p,o).then(function(r){return r.json().then(function(d){if(!r.ok)throw new Error(d.detail||r.statusText);return d})})}
+function loadConfig(){api("GET","/config").then(function(d){document.getElementById("login-hint").style.display="none";document.getElementById("maximg").value=d.data.max_images;document.getElementById("enabled").checked=d.data.enabled}).catch(function(e){document.getElementById("login-hint").style.display="block";toast(e.message,"err")})}
 function saveConfig(){var b=document.getElementById("btn-save");b.disabled=true;b.textContent="保存中...";var mx=parseInt(document.getElementById("maximg").value)||10;var en=document.getElementById("enabled").checked;api("PUT","/config",{max_images:mx,enabled:en}).then(function(){toast("已保存","ok")}).catch(function(e){toast(e.message,"err")}).finally(function(){b.disabled=false;b.textContent="保存"})}
 function doScan(){var p=document.getElementById("pid").value.trim();if(!p)return toast("请输入PID","err");var b=document.getElementById("btn-scan"),s=document.getElementById("status");b.disabled=true;b.textContent="扫描中...";s.textContent="";var sp=document.createElement("span");sp.className="spin";s.appendChild(sp);s.appendChild(document.createTextNode(" 扫描 PID "+esc(p)+" ..."));api("POST","/scan/"+p+"?force=true").then(function(d){var r=d.data;s.innerHTML="";var ok=document.createElement("span");ok.className="tag-inline tag-suc";ok.textContent="完成";s.appendChild(ok);s.appendChild(document.createTextNode(" PID:"+r.pid+" TID:"+r.tid+" "+esc(r.forum_name)+" - "+r.ocr_images+"/"+r.total_images+" 张已OCR，共 "+r.ocr_text.length+" 字"));loadResults()}).catch(function(e){s.innerHTML="";var er=document.createElement("span");er.className="tag-inline tag-dng";er.textContent="失败";s.appendChild(er);s.appendChild(document.createTextNode(" "+esc(e.message)))}).finally(function(){b.disabled=false;b.textContent="扫描"})}
 function esc(s){if(typeof s!=="string")return"";return s.replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#39;")}
