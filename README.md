@@ -27,6 +27,25 @@
 pip install rapidocr_onnxruntime
 ```
 
+> **⚠️ 无头服务器（无桌面环境/图形库）注意**：
+>
+> RapidOCR 依赖 `opencv-python`，而默认的 `opencv-python` 需要系统图形库（`libGL.so.1`）。在无头服务器（SSH 服务器、Docker 容器、云主机）上安装或运行时，会报错：
+>
+> ```
+> ImportError: libGL.so.1: cannot open shared object file: No such file or directory
+> ```
+>
+> **解决方法**：用无头版本代替默认版本：
+>
+> ```bash
+> pip uninstall opencv-python -y 2>/dev/null || true
+> pip install opencv-python-headless
+> ```
+>
+> `opencv-python-headless` 不依赖图形库，功能对 OCR 完全够用。
+>
+> 如果你的服务器有桌面环境（本地装了显卡/图形驱动），默认 `opencv-python` 即可，无需替换。
+
 2. 将 `ocr_review.py` 放入 WTM 的 `plugins/` 目录：
 
 ```bash
