@@ -1,6 +1,8 @@
 # WebTiebaManager OCR Review 插件 (ocr_review)
 
-[WebTiebaManager](https://github.com/) (WTM) 的插件：对贴吧帖子中的**图片自动进行 OCR 识别**，当图片文字命中关键词时触发规则处理（删除/确认/忽略）。
+**本插件是 [WebTiebaManager](https://github.com/TiebaMeow/WebTiebaManager)（贴吧吧务管理工具）的插件**，放置于其 `plugins/` 目录。
+
+[WebTiebaManager](https://github.com/TiebaMeow/WebTiebaManager) (WTM) 的插件：对贴吧帖子中的**图片自动进行 OCR 识别**，当图片文字命中关键词时触发规则处理（删除/确认/忽略）。
 
 - 🖼️ 帖子带图 → 自动下载图片 → OCR 识别文字 → 匹配关键词
 - 🔑 在 WTM 规则编辑器中注册自定义条件 `ImageOCRHit`
